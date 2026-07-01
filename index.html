@@ -143,7 +143,7 @@
   tbody tr:nth-child(odd) td{background:rgba(255,255,255,0.015);}
   td{text-align:right; color:var(--text-dim);}
   td.empty{color:var(--text-faint);}
-  td.paid{background:var(--mint-dim); color:var(--mint); font-weight:600;}
+  td.paid{color:var(--mint); font-weight:600;}
   td.total{font-weight:700; color:var(--text);}
   td.saldo{font-weight:600;}
   td.saldo.owed{color:var(--rose);}
@@ -264,7 +264,7 @@
   <section class="notes">
     <h3>Observações</h3>
     <ul>
-      <li>Erlon, Marlene, Neiva e Saulo não têm valor fixo combinado — eles cobrem o restante do custo via as parcelas mensais.</li>
+      <li>Erlon, Marlene, Neiva e Saulo não têm valor fixo combinado.</li>
       <li><strong>Saldo</strong> = Valor Combinado − Total Pago (só vale pra quem tem valor fixo). Positivo é o que ainda falta; “tudo certo” significa que já pagou o combinado.</li>
       <li>Quando o <strong>“Valor a Mais do Mês”</strong> for maior que zero, esse extra entra no crédito acumulado — e é esse crédito que vamos usar pra tentar adiantar uma parcela.</li>
     </ul>
@@ -305,16 +305,16 @@ const PARTICIPANTS = [
   { nome:"Erlon",           combinado:null,pagamentos:{} },
   { nome:"Elisete",         combinado:100, pagamentos:{} },
   { nome:"Jeronima",        combinado:100, pagamentos:{ Junho:{data:"27/06/2026", valor:100} } },
-  { nome:"Mariana",         combinado:100, pagamentos:{} },
+  { nome:"Mariana",         combinado:100, pagamentos:{ Junho: {data:"01/07/2026", valor:100} }},
   { nome:"Marlene",         combinado:null,pagamentos:{} },
   { nome:"Maysa",           combinado:100, pagamentos:{} },
-  { nome:"Meiris",          combinado:100, pagamentos:{ Junho: {data:"30/06/2026", valor:100}} },
-  { nome:"Neusaret",       combinado:100, pagamentos:{ Junho:{data:"27/06/2026", valor:100} } },
+  { nome:"Meiris",          combinado:100, pagamentos:{ Junho: {data:"30/06/2026", valor:100} } },
+  { nome:"Neusarete",        combinado:100, pagamentos:{ Junho: {data:"27/06/2026", valor:100} } },
   { nome:"Neiva",           combinado:null,pagamentos:{} },
   { nome:"Paulo Ricardo",   combinado:50,  pagamentos:{} },
   { nome:"Saulo",           combinado:null,pagamentos:{ Junho:{data:"28/06/2026", valor:200} } },
   { nome:"Sandra",          combinado:50,  pagamentos:{} },
-  { nome:"Thiago Barcelos", combinado:100, pagamentos:{} },
+  { nome:"Thiago Barcelos", combinado:100, pagamentos:{ Junho: {data:"01/07/2026", valor:100} } },
 ];
 
 const BRL = new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' });
