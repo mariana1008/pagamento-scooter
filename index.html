@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vaquinha da Scooter da Mônica</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%B5%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c2858;
+    --bg-soft:#16294A;
+    --card:#1C3258;
+    --card-2:#203A66;
+    --line:rgba(245,241,232,0.14);
+    --coral:#FF7A57;
+    --coral-dim:rgba(255,122,87,0.16);
+    --gold:#FFC857;
+    --mint:#4FD8A4;
+    --mint-dim:rgba(79,216,164,0.16);
+    --rose:#F08A9B;
+    --rose-dim:rgba(240,138,155,0.14);
+    --text:#F6F2E9;
+    --text-dim:rgba(246,242,233,0.66);
+    --text-faint:rgba(246,242,233,0.42);
+    --font-display:'Baloo 2', system-ui, sans-serif;
+    --font-body:'Inter', system-ui, sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(900px 500px at 12% -10%, rgba(255,122,87,0.10), transparent 60%),
+      radial-gradient(900px 600px at 100% 0%, rgba(79,216,164,0.08), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--gold);}
+  h1,h2,h3{font-family:var(--font-display); margin:0; letter-spacing:0.2px;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:56px 0 28px;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--font-mono); font-size:12.5px; letter-spacing:1.5px;
+    text-transform:uppercase; color:var(--mint);
+    background:var(--mint-dim); border:1px solid rgba(79,216,164,0.35);
+    padding:6px 12px; border-radius:999px;
+  }
+  .hero h1{
+    font-size:clamp(32px, 5.6vw, 52px);
+    font-weight:800; margin-top:18px; color:var(--text);
+  }
+  .hero h1 span{color:var(--coral);}
+  .hero p.sub{
+    font-size:17px; color:var(--text-dim); max-width:560px; margin-top:12px;
+  }
+
+  /* ---------- STAT STRIP ---------- */
+  .stats{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:34px;
+  }
+  .stat{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:18px 18px 16px;
+  }
+  .stat .label{
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:1px;
+    text-transform:uppercase; color:var(--text-faint);
+  }
+  .stat .value{
+    font-family:var(--font-display); font-weight:700; font-size:26px; margin-top:6px;
+  }
+  .stat.coral .value{color:var(--coral);}
+  .stat.gold .value{color:var(--gold);}
+  .stat.mint .value{color:var(--mint);}
+
+  /* ---------- ROAD ---------- */
+  .road-card{
+    margin-top:28px; background:var(--card); border:1px solid var(--line);
+    border-radius:20px; padding:22px 22px 10px; overflow:hidden;
+  }
+  .road-card .road-head{
+    display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px;
+    margin-bottom:6px;
+  }
+  .road-card h3{font-size:18px; color:var(--text);}
+  .road-card .road-note{font-size:13px; color:var(--text-faint); font-family:var(--font-mono);}
+  svg.road{width:100%; height:auto; display:block;}
+  .flag-label{font-family:var(--font-mono); font-size:12px; fill:var(--text-faint);}
+  .flag-circle{fill:var(--bg-soft); stroke:var(--line); stroke-width:2;}
+  .flag-circle.ready{fill:var(--mint); stroke:var(--mint);}
+  .flag-num{font-family:var(--font-mono); font-size:13px; font-weight:600; fill:var(--text-dim); text-anchor:middle;}
+  .flag-num.ready{fill:#0E2233;}
+  .flag-pole{stroke:var(--line); stroke-width:2;}
+  .road-base{fill:var(--bg-soft);}
+  .road-dash{stroke:var(--text-faint); stroke-width:3; stroke-dasharray:14 12;}
+  #scooterGroup{transform-box:fill-box; transform-origin:center;}
+  @media (prefers-reduced-motion:no-preference){
+    #scooterWheelA, #scooterWheelB{animation:spin 2.4s linear infinite;}
+    #scooterGroup{animation:bob 2.6s ease-in-out infinite;}
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+
+  /* ---------- TABLE ---------- */
+  .table-section{margin-top:40px;}
+  .table-section h2{font-size:22px; margin-bottom:4px;}
+  .table-section .desc{color:var(--text-dim); font-size:14px; margin-bottom:16px;}
+  .table-wrap{
+    border:1px solid var(--line); border-radius:16px; overflow:auto;
+    background:var(--card); max-height:560px;
+  }
+  table{border-collapse:separate; border-spacing:0; font-family:var(--font-mono); font-size:13px; min-width:100%;}
+  th,td{padding:9px 12px; white-space:nowrap; border-bottom:1px solid var(--line); border-right:1px solid var(--line);}
+  thead th{
+    background:var(--card-2); color:var(--text-dim); font-weight:600;
+    position:sticky; top:0; z-index:3; text-align:center;
+    font-family:var(--font-body); font-size:12px; letter-spacing:0.3px;
+  }
+  thead tr:first-child th{top:0;}
+  thead tr:nth-child(2) th{top:34px;}
+  td.name, th.name{
+    position:sticky; left:0; z-index:2; background:var(--card);
+    font-family:var(--font-body); font-weight:600; text-align:left; min-width:150px;
+  }
+  th.name{z-index:4; background:var(--card-2);}
+  td.combo, th.combo{
+    position:sticky; left:150px; z-index:2; background:var(--card);
+    text-align:right; min-width:96px;
+  }
+  th.combo{z-index:4; background:var(--card-2);}
+  tbody tr:nth-child(odd) td.name, tbody tr:nth-child(odd) td.combo{background:#1A2F54;}
+  tbody tr:nth-child(odd) td{background:rgba(255,255,255,0.015);}
+  td{text-align:right; color:var(--text-dim);}
+  td.empty{color:var(--text-faint);}
+  td.paid{background:var(--mint-dim); color:var(--mint); font-weight:600;}
+  td.total{font-weight:700; color:var(--text);}
+  td.saldo{font-weight:600;}
+  td.saldo.owed{color:var(--rose);}
+  td.saldo.clear{color:var(--text-faint);}
+  tfoot td.label{
+    position:sticky; left:0; z-index:2; text-align:left; font-family:var(--font-body);
+    font-weight:700; min-width:246px;
+  }
+  tfoot tr.arrecadado td{background:rgba(255,255,255,0.05); font-weight:700; color:var(--text);}
+  tfoot tr.arrecadado td.label{background:var(--card-2);}
+  tfoot tr.parcela td{font-style:italic; color:var(--text-faint); font-weight:500;}
+  tfoot tr.parcela td.label{background:var(--card); font-style:italic;}
+  tfoot tr.extra td{background:rgba(255,200,87,0.18); color:var(--gold); font-weight:700;}
+  tfoot tr.extra td.label{background:rgba(255,200,87,0.28); color:#3A2B05;}
+  tfoot tr.falta td{background:var(--rose-dim); color:var(--rose); font-weight:700;}
+  tfoot tr.falta td.label{background:rgba(240,138,155,0.24); color:#4A1019;}
+  tfoot tr.credito td{background:var(--coral); color:#fff; font-weight:700;}
+  tfoot tr.credito td.label{background:#E85C36; color:#fff;}
+  tfoot tr.credito td.neg{color:#FFD9CC;}
+
+  /* ---------- TOTALS ---------- */
+  .totals{
+    margin-top:26px; display:grid; grid-template-columns:1fr; gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden;
+  }
+  .totals .row{display:flex; justify-content:space-between; padding:14px 18px; background:var(--card); font-size:15px;}
+  .totals .row strong{font-family:var(--font-mono);}
+  .totals .row.final{background:var(--card-2);}
+  .totals .row.final strong{color:var(--gold); font-size:17px;}
+
+  /* ---------- NOTES ---------- */
+  .notes{margin-top:34px; padding:20px 22px; background:var(--card); border:1px solid var(--line); border-radius:16px;}
+  .notes h3{font-size:15px; margin-bottom:10px; color:var(--text);}
+  .notes ul{margin:0; padding-left:18px; color:var(--text-dim); font-size:14px;}
+  .notes li{margin-bottom:7px;}
+  .notes li::marker{color:var(--coral);}
+  .legend{display:flex; gap:18px; flex-wrap:wrap; margin-top:14px; font-size:12.5px; color:var(--text-faint); font-family:var(--font-mono);}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .swatch{width:12px; height:12px; border-radius:4px; display:inline-block;}
+
+  footer{margin:48px 0 30px; text-align:center; color:var(--text-faint); font-size:12.5px;}
+
+  @media (max-width:720px){
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .table-wrap{max-height:480px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <span class="eyebrow">🛵 vaquinha em andamento</span>
+    <h1>A caminho da <span>scooter</span> da Mônica</h1>
+    <p class="sub">Acompanhe em tempo real quem já contribuiu, quanto falta para cada parcela e o quanto já temos de crédito para tentar adiantar o pagamento.</p>
+
+    <div class="stats">
+      <div class="stat coral">
+        <div class="label">Arrecadado</div>
+        <div class="value" id="statArrecadado">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">Meta da scooter</div>
+        <div class="value" id="statMeta">—</div>
+      </div>
+      <div class="stat gold">
+        <div class="label">Falta arrecadar</div>
+        <div class="value" id="statFalta">—</div>
+      </div>
+      <div class="stat mint">
+        <div class="label">Parcelas garantidas</div>
+        <div class="value" id="statParcelas">—</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="road-card">
+    <div class="road-head">
+      <h3>Estrada até a meta</h3>
+      <span class="road-note" id="roadPercentLabel">0% do caminho</span>
+    </div>
+    <svg class="road" viewBox="0 0 1000 190" id="roadSvg">
+      <rect class="road-base" x="20" y="92" width="960" height="26" rx="13"></rect>
+      <line class="road-dash" x1="20" y1="105" x2="980" y2="105"></line>
+      <g id="flags"></g>
+      <g id="scooterGroup">
+        <g id="scooterIcon" transform="translate(20,60)">
+          <ellipse cx="20" cy="46" rx="22" ry="5" fill="rgba(0,0,0,0.25)"></ellipse>
+          <path d="M2 38 Q4 22 22 20 L34 20 Q40 20 42 28 L46 36 L40 36 L38 30 Q36 26 31 26 L23 26 Q15 26 13 34 L11 38 Z" fill="var(--coral)"></path>
+          <rect x="30" y="12" width="5" height="10" rx="2" fill="var(--coral)"></rect>
+          <circle cx="34" cy="11" r="3.2" fill="var(--gold)"></circle>
+          <g id="scooterWheelA" transform="translate(11,38)">
+            <circle r="7" fill="#0E2233" stroke="var(--gold)" stroke-width="2"></circle>
+          </g>
+          <g id="scooterWheelB" transform="translate(40,38)">
+            <circle r="7" fill="#0E2233" stroke="var(--gold)" stroke-width="2"></circle>
+          </g>
+        </g>
+      </g>
+    </svg>
+  </section>
+
+  <section class="table-section">
+    <h2>Quem já contribuiu</h2>
+    <p class="desc">Role para o lado para ver todos os meses. Nome e valor combinado ficam fixos na lateral.</p>
+    <div class="table-wrap">
+      <table id="mainTable"></table>
+    </div>
+  </section>
+
+  <div class="totals">
+    <div class="row"><span>Total arrecadado (geral)</span><strong id="totArrecadado">—</strong></div>
+    <div class="row"><span>Total necessário (custo da scooter)</span><strong id="totNecessario">—</strong></div>
+    <div class="row final"><span>Falta arrecadar</span><strong id="totFalta">—</strong></div>
+  </div>
+
+  <section class="notes">
+    <h3>Observações</h3>
+    <ul>
+      <li>Erlon, Marlene, Neiva e Saulo não têm valor fixo combinado — eles cobrem o restante do custo via as parcelas mensais.</li>
+      <li><strong>Saldo</strong> = Valor Combinado − Total Pago (só vale pra quem tem valor fixo). Positivo é o que ainda falta; “tudo certo” significa que já pagou o combinado.</li>
+      <li>Quando o <strong>“Valor a Mais do Mês”</strong> for maior que zero, esse extra entra no crédito acumulado — e é esse crédito que vamos usar pra tentar adiantar uma parcela.</li>
+    </ul>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--mint)"></span>pagamento registrado</span>
+      <span><span class="swatch" style="background:var(--gold)"></span>sobra do mês</span>
+      <span><span class="swatch" style="background:var(--rose)"></span>falta no mês</span>
+      <span><span class="swatch" style="background:var(--coral)"></span>crédito acumulado</span>
+    </div>
+  </section>
+
+  <footer>feito com carinho pra galera ajudar a Mônica a andar de scooter 🛵</footer>
+</div>
+
+<script>
+/* =========================================================================
+   COMO ATUALIZAR ESTA PÁGINA
+   1. Para registrar um pagamento, ache a pessoa em PARTICIPANTS abaixo e
+      adicione o mês dentro de "pagamentos", assim:
+        pagamentos: { Junho: { data: "27/06/2026", valor: 100 } }
+   2. Pode registrar mais de um mês por pessoa, só separar por vírgula:
+        pagamentos: { Junho: {...}, Julho: {...} }
+   3. Salve o arquivo e suba pro GitHub — tudo (tabela, totais, crédito e a
+      estradinha lá em cima) é recalculado automaticamente, sem precisar
+      tocar em mais nada.
+   ========================================================================= */
+
+const SCOOTER_TOTAL = 9873;
+const PARCELAS = 10;
+const MONTHS = ["Junho","Julho","Agosto","Setembro","Outubro","Novembro",
+                "Dezembro","Janeiro","Fevereiro","Março"];
+
+const PARTICIPANTS = [
+  { nome:"Bruno Barcelos",  combinado:100, pagamentos:{} },
+  { nome:"Douglas Pereira", combinado:50,  pagamentos:{} },
+  { nome:"Elaine",          combinado:100, pagamentos:{ Junho:{data:"27/06/2026", valor:100} } },
+  { nome:"Élida",           combinado:100, pagamentos:{} },
+  { nome:"Erlon",           combinado:null,pagamentos:{} },
+  { nome:"Elisete",         combinado:100, pagamentos:{} },
+  { nome:"Jeronima",        combinado:100, pagamentos:{ Junho:{data:"27/06/2026", valor:100} } },
+  { nome:"Mariana",         combinado:100, pagamentos:{} },
+  { nome:"Marlene",         combinado:null,pagamentos:{} },
+  { nome:"Maysa",           combinado:100, pagamentos:{} },
+  { nome:"Meiris",          combinado:100, pagamentos:{} },
+  { nome:"Neusareth",       combinado:100, pagamentos:{ Junho:{data:"27/06/2026", valor:100} } },
+  { nome:"Neiva",           combinado:null,pagamentos:{} },
+  { nome:"Paulo Ricardo",   combinado:50,  pagamentos:{} },
+  { nome:"Saulo",           combinado:null,pagamentos:{ Junho:{data:"28/06/2026", valor:200} } },
+  { nome:"Sandra",          combinado:50,  pagamentos:{} },
+  { nome:"Thiago Barcelos", combinado:100, pagamentos:{} },
+];
+
+const BRL = new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' });
+const fmt = v => BRL.format(v);
+const PARCELA_VALOR = SCOOTER_TOTAL / PARCELAS;
+
+function calc(){
+  const porPessoa = PARTICIPANTS.map(p=>{
+    const totalPago = MONTHS.reduce((s,m)=> s + (p.pagamentos[m]?.valor || 0), 0);
+    const saldo = p.combinado==null ? null : (p.combinado - totalPago);
+    return {...p, totalPago, saldo};
+  });
+
+  let creditoAcumulado = 0;
+  const porMes = MONTHS.map(m=>{
+    const arrecadado = porPessoa.reduce((s,p)=> s + (p.pagamentos[m]?.valor || 0), 0);
+    const extra = Math.max(arrecadado - PARCELA_VALOR, 0);
+    const falta = Math.max(PARCELA_VALOR - arrecadado, 0);
+    creditoAcumulado += (arrecadado - PARCELA_VALOR);
+    return { mes:m, arrecadado, extra, falta, credito:creditoAcumulado };
+  });
+
+  const totalArrecadadoGeral = porMes.reduce((s,m)=> s + m.arrecadado, 0);
+  const faltaTotal = SCOOTER_TOTAL - totalArrecadadoGeral;
+  const parcelasProntas = Math.min(PARCELAS, Math.floor(totalArrecadadoGeral / PARCELA_VALOR));
+  const percent = Math.max(0, Math.min(1, totalArrecadadoGeral / SCOOTER_TOTAL));
+
+  return { porPessoa, porMes, totalArrecadadoGeral, faltaTotal, parcelasProntas, percent };
+}
+
+function renderStats(d){
+  document.getElementById('statArrecadado').textContent = fmt(d.totalArrecadadoGeral);
+  document.getElementById('statMeta').textContent = fmt(SCOOTER_TOTAL);
+  document.getElementById('statFalta').textContent = fmt(d.faltaTotal);
+  document.getElementById('statParcelas').textContent = d.parcelasProntas + ' de ' + PARCELAS;
+  document.getElementById('totArrecadado').textContent = fmt(d.totalArrecadadoGeral);
+  document.getElementById('totNecessario').textContent = fmt(SCOOTER_TOTAL);
+  document.getElementById('totFalta').textContent = fmt(d.faltaTotal);
+  document.getElementById('roadPercentLabel').textContent = Math.round(d.percent*100) + '% do caminho';
+}
+
+function renderRoad(d){
+  const flagsG = document.getElementById('flags');
+  const startX = 40, endX = 960, baseY = 105;
+  flagsG.innerHTML = '';
+  for(let i=1;i<=PARCELAS;i++){
+    const x = startX + (i/PARCELAS)*(endX-startX);
+    const ready = i <= d.parcelasProntas;
+    flagsG.innerHTML += `
+      <line class="flag-pole" x1="${x}" y1="${baseY-2}" x2="${x}" y2="${baseY-34}"></line>
+      <circle class="flag-circle ${ready?'ready':''}" cx="${x}" cy="${baseY-44}" r="13"></circle>
+      <text class="flag-num ${ready?'ready':''}" x="${x}" y="${baseY-40}">${i}</text>
+      <text class="flag-label" x="${x}" y="${baseY+22}" text-anchor="middle">${ready?'pronta':'pendente'}</text>
+    `;
+  }
+  const travel = (endX-startX) - 50;
+  const sx = startX + d.percent*travel;
+  document.getElementById('scooterGroup').setAttribute('transform', `translate(${sx-20},0)`);
+}
+
+function monthCellsHeader(){
+  let dataRow = '', valorRow = '';
+  MONTHS.forEach(m=>{
+    dataRow += `<th colspan="2">${m}</th>`;
+  });
+  return dataRow;
+}
+
+function renderTable(d){
+  const table = document.getElementById('mainTable');
+  let thead = '<thead><tr><th class="name" rowspan="2">Nome</th><th class="combo" rowspan="2">Combinado</th>' + monthCellsHeader() + '<th rowspan="2">Total Pago</th><th rowspan="2">Saldo</th></tr><tr>';
+  MONTHS.forEach(()=>{ thead += '<th>Data</th><th>Valor</th>'; });
+  thead += '</tr></thead>';
+
+  let tbody = '<tbody>';
+  d.porPessoa.forEach(p=>{
+    tbody += `<tr><td class="name">${p.nome}</td><td class="combo">${p.combinado==null?'<span class="empty">variável</span>':fmt(p.combinado)}</td>`;
+    MONTHS.forEach(m=>{
+      const pay = p.pagamentos[m];
+      if(pay){
+        tbody += `<td class="paid">${pay.data}</td><td class="paid">${fmt(pay.valor)}</td>`;
+      } else {
+        tbody += `<td class="empty">—</td><td class="empty">—</td>`;
+      }
+    });
+    tbody += `<td class="total">${fmt(p.totalPago)}</td>`;
+    if(p.saldo==null){
+      tbody += `<td class="saldo">—</td>`;
+    } else if(p.saldo<=0){
+      tbody += `<td class="saldo clear">tudo certo</td>`;
+    } else {
+      tbody += `<td class="saldo owed">${fmt(p.saldo)}</td>`;
+    }
+    tbody += '</tr>';
+  });
+  tbody += '</tbody>';
+
+  function footRow(cls, label, valueFn, extraClassFn){
+    let row = `<tr class="${cls}"><td class="label" colspan="2">${label}</td>`;
+    d.porMes.forEach(m=>{
+      const v = valueFn(m);
+      const extra = extraClassFn ? extraClassFn(v) : '';
+      row += `<td colspan="2" class="${extra}">${v===null?'':fmt(v)}</td>`;
+    });
+    row += `<td colspan="2"></td></tr>`;
+    return row;
+  }
+
+  let tfoot = '<tfoot>';
+  tfoot += footRow('arrecadado', 'Valor arrecadado no mês', m=>m.arrecadado);
+  tfoot += footRow('parcela', 'Valor da parcela (referência)', ()=>PARCELA_VALOR);
+  tfoot += footRow('extra', 'Valor a mais do mês (sobra)', m=>m.extra);
+  tfoot += footRow('falta', 'Falta para completar a parcela', m=>m.falta);
+  tfoot += footRow('credito', 'Crédito acumulado', m=>m.credito, v=> v<0 ? 'neg' : '');
+  tfoot += '</tfoot>';
+
+  table.innerHTML = thead + tbody + tfoot;
+}
+
+const data = calc();
+renderStats(data);
+renderRoad(data);
+renderTable(data);
+</script>
+</body>
+</html>
