@@ -67,7 +67,7 @@
 
   /* ---------- STAT STRIP ---------- */
   .stats{
-    display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:34px;
+    display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-top:34px;
   }
   .stat{
     background:var(--card); border:1px solid var(--line); border-radius:16px;
@@ -99,6 +99,8 @@
   .flag-label{font-family:var(--font-mono); font-size:12px; fill:var(--text-faint);}
   .flag-circle{fill:var(--bg-soft); stroke:var(--line); stroke-width:2;}
   .flag-circle.ready{fill:var(--mint); stroke:var(--mint);}
+  .flag-circle.quitada{fill:var(--coral); stroke:var(--coral);}
+  .flag-num.quitada{fill:#fff;} 
   .flag-num{font-family:var(--font-mono); font-size:13px; font-weight:600; fill:var(--text-dim); text-anchor:middle;}
   .flag-num.ready{fill:#0E2233;}
   .flag-pole{stroke:var(--line); stroke-width:2;}
@@ -163,7 +165,8 @@
   tfoot tr.credito td{background:var(--coral); color:#fff; font-weight:700;}
   tfoot tr.credito td.label{background:#E85C36; color:#fff;}
   tfoot tr.credito td.neg{color:#FFD9CC;}
-
+  tfoot tr.amortizacao td{background:rgba(255,122,87,0.12); color:var(--coral); font-weight:600; font-size:12px;}
+  tfoot tr.amortizacao td.label{background:rgba(255,122,87,0.2); color:#3A1808;}
   /* ---------- TOTALS ---------- */
   .totals{
     margin-top:26px; display:grid; grid-template-columns:1fr; gap:1px;
@@ -187,7 +190,7 @@
   footer{margin:48px 0 30px; text-align:center; color:var(--text-faint); font-size:12.5px;}
 
   @media (max-width:720px){
-    .stats{grid-template-columns:repeat(2,1fr);}
+    .stats{grid-template-columns:repeat(3,1fr);}
     .table-wrap{max-height:480px;}
   }
 </style>
@@ -217,6 +220,10 @@
       <div class="stat mint">
         <div class="label">Parcelas garantidas</div>
         <div class="value" id="statParcelas">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">Economia com amortização</div>
+        <div class="value" id="statEconomia">—</div>
       </div>
     </div>
   </header>
@@ -299,7 +306,8 @@ const MONTHS = ["Junho","Julho","Agosto","Setembro","Outubro","Novembro",
 
 const PARTICIPANTS = [
   { nome:"Bruno Barcelos",  combinado:100, pagamentos:{ Junho: {data:"10/07/2026", valor:100}, Julho: {data:"02/08/2026", valor:100} } },
-  { nome:"Douglas Pereira", combinado:50,  pagamentos:{ Junho: {data:"08/07/2026", valor:50} } },
+  { nome:"Douglas Pereira", combinado:50,  pagamentos:{ Junho: {data:"08/07/2026", valor:50}, Julho: {data:"02/08/2026", valor:50} } },
+  { nome:"Daniel",          combinado:null,pagamentos:{ Julho: {data:"02/08/2026", valor:100} } },
   { nome:"Elaine",          combinado:100, pagamentos:{ Junho:{data:"27/06/2026", valor:100}, Julho: {data:"02/08/2026", valor:100} } },
   { nome:"Élida",           combinado:100, pagamentos:{ Junho: {data:"02/07/2026", valor:100},Julho: {data:"04/08/2026", valor:100} } },
   { nome:"Erlon",           combinado:null,pagamentos:{ Junho: {data:"02/07/2026", valor:50}, Julho: {data:"02/08/2026", valor:50} } },
@@ -313,8 +321,12 @@ const PARTICIPANTS = [
   { nome:"Neiva",           combinado:null,pagamentos:{ Junho: {data:"02/07/2026", valor:50}, Julho: {data:"04/08/2026", valor:50} } },
   { nome:"Paulo Ricardo",   combinado:50,  pagamentos:{ Julho: {data:"02/08/2026", valor:50}} },
   { nome:"Saulo",           combinado:null,pagamentos:{ Junho: {data:"28/06/2026", valor:200}, Julho: {data:"02/08/2026", valor:100} } },
-  { nome:"Sandra",          combinado:50,  pagamentos:{ Junho: {data:"06/07/2026", valor:50} } },
+  { nome:"Sandra",          combinado:50,  pagamentos:{ Junho: {data:"06/07/2026", valor:50}, Julho: {data:"02/08/2026", valor:50} } },
   { nome:"Thiago Barcelos", combinado:100, pagamentos:{ Junho: {data:"01/07/2026", valor:100}, Julho: {data:"02/08/2026", valor:100} } },
+];
+
+const AMORTIZACOES = [
+  { mes:"Julho", parcela:10, data:"08/08/2026", valorPago:956.94 },
 ];
 
 const BRL = new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' });
@@ -329,31 +341,55 @@ function calc(){
   });
 
   let creditoAcumulado = 0;
+  let totalDescontos = 0;
+  let totalPagoAmortizacoes = 0; // ⬅️ NOVO: soma do que já foi de fato pago à loja
+  const parcelasAmortizadas = new Set(AMORTIZACOES.map(a=>a.parcela));
+
   const porMes = MONTHS.map(m=>{
     const arrecadado = porPessoa.reduce((s,p)=> s + (p.pagamentos[m]?.valor || 0), 0);
     const extra = Math.max(arrecadado - PARCELA_VALOR, 0);
     const falta = Math.max(PARCELA_VALOR - arrecadado, 0);
     creditoAcumulado += (arrecadado - PARCELA_VALOR);
-    return { mes:m, arrecadado, extra, falta, credito:creditoAcumulado };
+
+    const amortizacoesDoMes = AMORTIZACOES.filter(a=> a.mes === m);
+    amortizacoesDoMes.forEach(a=>{
+      const desconto = PARCELA_VALOR - a.valorPago;
+      creditoAcumulado -= a.valorPago;
+      totalDescontos += desconto;
+      totalPagoAmortizacoes += a.valorPago; // ⬅️ NOVO
+    });
+
+    return { mes:m, arrecadado, extra, falta, credito:creditoAcumulado, amortizacoes:amortizacoesDoMes };
   });
 
   const totalArrecadadoGeral = porMes.reduce((s,m)=> s + m.arrecadado, 0);
-  const faltaTotal = SCOOTER_TOTAL - totalArrecadadoGeral;
-  const parcelasProntas = Math.min(PARCELAS, Math.floor(totalArrecadadoGeral / PARCELA_VALOR));
-  const percent = Math.max(0, Math.min(1, totalArrecadadoGeral / SCOOTER_TOTAL));
+  const custoReal = SCOOTER_TOTAL - totalDescontos;
+  const faltaTotal = custoReal - totalArrecadadoGeral;
 
-  return { porPessoa, porMes, totalArrecadadoGeral, faltaTotal, parcelasProntas, percent };
+  // ⬅️ CORRIGIDO: desconta o que já foi efetivamente pago nas amortizações
+  const dinheiroDisponivel = Math.max(0, totalArrecadadoGeral - totalPagoAmortizacoes);
+  const parcelasProntas = Math.min(
+    PARCELAS - parcelasAmortizadas.size,
+    Math.floor(dinheiroDisponivel / PARCELA_VALOR)
+  );
+  const parcelasQuitadas = parcelasAmortizadas.size;
+  const percent = Math.max(0, Math.min(1, totalArrecadadoGeral / custoReal));
+
+  return { porPessoa, porMes, totalArrecadadoGeral, custoReal, totalDescontos,
+           faltaTotal, parcelasProntas, parcelasQuitadas, parcelasAmortizadas, percent };
 }
 
 function renderStats(d){
   document.getElementById('statArrecadado').textContent = fmt(d.totalArrecadadoGeral);
   document.getElementById('statMeta').textContent = fmt(SCOOTER_TOTAL);
   document.getElementById('statFalta').textContent = fmt(d.faltaTotal);
-  document.getElementById('statParcelas').textContent = d.parcelasProntas + ' de ' + PARCELAS;
+  document.getElementById('statParcelas').textContent =
+  (d.parcelasProntas + d.parcelasQuitadas) + ' de ' + PARCELAS;
   document.getElementById('totArrecadado').textContent = fmt(d.totalArrecadadoGeral);
   document.getElementById('totNecessario').textContent = fmt(SCOOTER_TOTAL);
   document.getElementById('totFalta').textContent = fmt(d.faltaTotal);
   document.getElementById('roadPercentLabel').textContent = Math.round(d.percent*100) + '% do caminho';
+  document.getElementById('statEconomia').textContent = fmt(d.totalDescontos);
 }
 
 function renderRoad(d){
@@ -362,14 +398,17 @@ function renderRoad(d){
   flagsG.innerHTML = '';
   for(let i=1;i<=PARCELAS;i++){
     const x = startX + (i/PARCELAS)*(endX-startX);
+    const quitada = d.parcelasAmortizadas.has(i);
     const ready = i <= d.parcelasProntas;
+    const statusClass = quitada ? 'quitada' : (ready ? 'ready' : '');
+    const statusLabel = quitada ? 'quitada' : (ready ? 'quitada' : 'pendente');
     flagsG.innerHTML += `
       <line class="flag-pole" x1="${x}" y1="${baseY-2}" x2="${x}" y2="${baseY-34}"></line>
-      <circle class="flag-circle ${ready?'ready':''}" cx="${x}" cy="${baseY-44}" r="13"></circle>
-      <text class="flag-num ${ready?'ready':''}" x="${x}" y="${baseY-40}">${i}</text>
-      <text class="flag-label" x="${x}" y="${baseY+22}" text-anchor="middle">${ready?'pronta':'pendente'}</text>
+      <circle class="flag-circle ${statusClass}" cx="${x}" cy="${baseY-44}" r="13"></circle>
+      <text class="flag-num ${statusClass}" x="${x}" y="${baseY-40}">${i}</text>
+      <text class="flag-label" x="${x}" y="${baseY+22}" text-anchor="middle">${statusLabel}</text>
     `;
-  }
+}
   const travel = (endX-startX) - 50;
   const sx = startX + d.percent*travel;
   document.getElementById('scooterGroup').setAttribute('transform', `translate(${sx-20},0)`);
@@ -429,6 +468,16 @@ function renderTable(d){
   tfoot += footRow('extra', 'Valor a mais do mês (sobra)', m=>m.extra);
   tfoot += footRow('falta', 'Falta para completar a parcela', m=>m.falta);
   tfoot += footRow('credito', 'Crédito acumulado', m=>m.credito, v=> v<0 ? 'neg' : '');
+  tfoot += `<tr class="amortizacao"><td class="label" colspan="2">Amortização (parcela paga adiantada)</td>`;
+  d.porMes.forEach(m=>{
+    if(m.amortizacoes.length){
+      const linhas = m.amortizacoes.map(a=> `Parc. ${a.parcela}: ${fmt(a.valorPago)} (−${fmt(PARCELA_VALOR - a.valorPago)})`).join(' / ');
+      tfoot += `<td colspan="2">${linhas}</td>`;
+    } else {
+      tfoot += `<td colspan="2"></td>`;
+    }
+  });
+  tfoot += `<td colspan="2"></td></tr>`;
   tfoot += '</tfoot>';
 
   table.innerHTML = thead + tbody + tfoot;
