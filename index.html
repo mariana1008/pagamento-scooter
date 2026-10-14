@@ -302,7 +302,7 @@
 const SCOOTER_TOTAL = 9873;
 const PARCELAS = 10;
 const MONTHS = ["Junho","Julho","Agosto","Setembro","Outubro","Novembro",
-                "Dezembro","Janeiro","Fevereiro","Março"];
+                "Dezembro","Janeiro"];
 
 const PARTICIPANTS = [
   { nome:"Bruno Barcelos",  combinado:100, pagamentos:{ Junho: {data:"10/07/2026", valor:100}, Julho: {data:"02/08/2026", valor:100}, Agosto: {data:"08/09/2026", valor:100}, Setembro: {data:"08/10/2026", valor:100} } },
@@ -313,7 +313,7 @@ const PARTICIPANTS = [
   { nome:"Erlon",           combinado:null,pagamentos:{ Junho: {data:"02/07/2026", valor:50}, Julho: {data:"02/08/2026", valor:50}, Agosto: {data:"02/09/2026", valor:50}, Setembro: {data:"02/10/2026", valor:50}  } },
   { nome:"Elisete",         combinado:100, pagamentos:{ Junho: {data:"02/07/2026", valor:100}, Julho: {data:"02/08/2026", valor:100}, Agosto: {data:"02/09/2026", valor:100}, Setembro: {data:"03/10/2026", valor:100}  } },
   { nome:"Jeronima",        combinado:100, pagamentos:{ Junho: {data:"27/06/2026", valor:100}, Julho: {data:"02/08/2026", valor:100}, Agosto: {data:"03/09/2026", valor:100}, Setembro: {data:"01/10/2026", valor:100}  } },
-  { nome:"Mariana",         combinado:100, pagamentos:{ Junho: {data:"01/07/2026", valor:100}, Julho: {data:"01/08/2026", valor:100}, Agosto: {data:"03/09/2026", valor:100}, Setembro: {data:"01/10/2026", valor:100}  } },
+  { nome:"Mariana",         combinado:100, pagamentos:{ Junho: {data:"01/07/2026", valor:100}, Julho: {data:"01/08/2026", valor:100}, Agosto: {data:"03/09/2026", valor:100}, Setembro: {data:"01/10/2026", valor:115.69}  } },
   { nome:"Marlene",         combinado:null,pagamentos:{ Junho: {data:"04/07/2026", valor:100}, Julho: {data:"07/08/2026", valor:50}, Agosto: {data:"08/09/2026", valor:50}, Setembro: {data:"08/10/2026", valor:50} } },
   { nome:"Mayza",           combinado:100, pagamentos:{ Junho: {data:"02/07/2026", valor:100}, Julho: {data:"02/08/2026", valor:100}, Agosto: {data:"02/09/2026", valor:100}, Setembro: {data:"11/10/2026", valor:100} } },
   { nome:"Meiris",          combinado:100, pagamentos:{ Junho: {data:"30/06/2026", valor:100}, Julho: {data:"02/08/2026", valor:100}, Agosto: {data:"02/09/2026", valor:100}, Setembro: {data:"30/09/2026", valor:100}  } },
@@ -327,6 +327,7 @@ const PARTICIPANTS = [
 
 const AMORTIZACOES = [
   { mes:"Julho", parcela:10, data:"08/08/2026", valorPago:956.94 },
+  { mes:"Setembro", parcela:9, data:"14/10/2026", valorPago:969.55 },
 ];
 
 const BRL = new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' });
